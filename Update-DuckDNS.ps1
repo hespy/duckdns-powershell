@@ -1,5 +1,3 @@
-#Requires -Version 2
-
 <#
 .SYNOPSIS
 	Updates the IP address of your Duck DNS domain(s).
@@ -20,7 +18,7 @@
 .EXAMPLE
 	.\Update-DuckDNS.ps1 -Domains "foo,bar" -Token my-duck-dns-token
 .LINK
-	https://github.com/ataylor32/duckdns-powershell
+	https://github.com/hespy/duckdns-powershell
 #>
 
 Param (
@@ -44,23 +42,11 @@ Write-Debug "`$URL set to $URL"
 
 Write-Verbose "Sending update request to Duck DNS..."
 
-If ($PSVersionTable.PSVersion.Major -Gt 2) {
-	$Result = Invoke-WebRequest $URL
+$Result = Invoke-WebRequest $URL
 
-	If ($Result -Ne $Null) {
-		$ResponseString = $Result.ToString()
-	}
+If ($Result -Ne $Null) {
+	$ResponseString = $Result.ToString()
 }
-Else {
-	$Request = [System.Net.WebRequest]::Create($URL)
-	$Response = $Request.GetResponse()
-
-	If ($Response -Ne $Null) {
-		$StreamReader = New-Object System.IO.StreamReader $Response.GetResponseStream()
-		$ResponseString = $StreamReader.ReadToEnd()
-	}
-}
-
 If ($ResponseString -Eq "OK") {
 	Write-Verbose "Update successful."
 }
